@@ -1,37 +1,34 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+// since nums.size == nums[0].size, we can use 1 bit from each position and negate it.
 class Solution {
 public:
     string findDifferentBinaryString(vector<string>& nums) {
-        unordered_set<int> numsSet;
-        for (string& num: nums) numsSet.insert(stoi(num,0,2));
+        ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
         
-        int n = nums[0].size(), range=1<<n;
-        for (int i=0;i<range; ++i){
-            if (numsSet.find(i)==numsSet.end()) return bitset<16>(i).to_string().substr(16-n);
+        int n = nums.size();
+        string ans(n, '0');
+        for (int i=0;i<n; ++i){
+            if (nums[i][i]=='0')    ans[i]='1';
         }
 
-        return "";
+        return ans;
     }
 };
 
+// If nums.size != nums[0].size, then use this approach
 // class Solution {
 // public:
 //     string findDifferentBinaryString(vector<string>& nums) {
-//         string ans;
-//         int m=nums.size(), n= nums[0].size(), i, j, count;
-//         for (j=0;j<n; ++j){
-//             count = 0;
-//             for (i=0;i<m;++i){
-//                 if (nums[i][j]=='1') count++;
-//             }
-//             if (count<n){
-//                 ans.push_back('1');
-//             } else{
-//                 ans.push_back('0');
-//             }
+//         unordered_set<int> numsSet;
+//         for (string& num: nums) numsSet.insert(stoi(num,0,2));
+        
+//         int n = nums[0].size(), range=1<<n;
+//         for (int i=0;i<range; ++i){
+//             if (numsSet.find(i)==numsSet.end()) return bitset<16>(i).to_string().substr(16-n);
 //         }
-//         return ans;
+
+//         return "";
 //     }
 // };
