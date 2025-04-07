@@ -13,7 +13,6 @@ class Solution:
         for num in nums:
             dp = dp | (dp<<num)  # shift all set bits by num and OR the 2 to get all possible sums (set bits)
         
-        print(dp)
         return (dp & (1<<toFind)) != 0
     
 
