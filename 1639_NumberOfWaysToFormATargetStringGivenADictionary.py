@@ -1,37 +1,68 @@
 from typing import List
 
+# Bottom-Up DP - Tabulation
 class Solution:
     def numWays(self, words: List[str], target: str) -> int:
+        MOD = 10**9 + 7
+        freq = []
+        wordLen, targetLen = len(words[0]), len(target)
 
+        for i in range(wordLen):
+            freq.append([0]*26)
+            for word in words:
+                freq[i][ord(word[i])-97]+=1
 
-# TLE after 49/90 tests
+        dp = [[-1]*(targetLen+1) for _ in range(wordLen+1)]
+        for j in range(targetLen):
+            dp[wordLen][j] = 0
+
+        for i in range(wordLen+1):
+            dp[i][targetLen] = 1
+
+        for minWordIndex in range(wordLen-1, -1, -1):
+            for targetIndex in range(targetLen-1, -1, -1):
+                dp[minWordIndex][targetIndex] = dp[minWordIndex+1][targetIndex]
+                
+                targetChar = ord(target[targetIndex])-97
+                if freq[minWordIndex][targetChar]:
+                    dp[minWordIndex][targetIndex] = (dp[minWordIndex][targetIndex] + (freq[minWordIndex][targetChar]*dp[minWordIndex+1][targetIndex+1])%MOD)%MOD
+        
+        return dp[0][0]
+    
+
+# # Top-Down DP - Memoization
 # class Solution:
 #     def numWays(self, words: List[str], target: str) -> int:
+#         MOD = 10**9 + 7
 #         freq = []
-#         i = 0
-#         is_len_available = True
-#         while is_len_available:
-#             is_len_available = False
+#         wordLen, targetLen = len(words[0]), len(target)
+
+#         for i in range(wordLen):
 #             freq.append([0]*26)
 #             for word in words:
-#                 if len(word)>i:
-#                     freq[i][ord(word[i])-97]+=1
-#                     is_len_available = True
-#             i+=1
+#                 freq[i][ord(word[i])-97]+=1
 
-#         total_ways = 0
-#         max_word_len= len(freq)
-#         target_len = len(target)
-#         def dfs(min_word_index: int, target_index: int, ways: int):
-#             if target_len == target_index:
-#                 nonlocal total_ways
-#                 total_ways+=ways
-#                 return
+#         memo = [[-1]*targetLen for _ in range(wordLen)]
+#         def dfs(minWordIndex: int, targetIndex: int):
+#             if targetLen == targetIndex:
+#                 return 1
             
-#             target_char_to_int = ord(target[target_index])-97
-#             for i in range(min_word_index, max_word_len):
-#                 if freq[i][target_char_to_int]:
-#                     dfs(i+1, target_index+1, ways*freq[i][target_char_to_int])
+#             if minWordIndex == wordLen:
+#                 return 0
+            
+#             if memo[minWordIndex][targetIndex] != -1:
+#                 return memo[minWordIndex][targetIndex]
+            
+#             # without using current index
+#             ways = dfs(minWordIndex+1, targetIndex) 
+            
+#             #with using current minIndex
+#             targetChar = ord(target[targetIndex])-97
+#             if freq[minWordIndex][targetChar]:
+#                 ways = (ways + (freq[minWordIndex][targetChar]*dfs(minWordIndex+1, targetIndex+1))%MOD)%MOD
+            
+#             memo[minWordIndex][targetIndex] = ways
+
+#             return ways
         
-#         dfs(0, 0, 1)
-#         return total_ways%1000000007
+#         return dfs(0, 0)
