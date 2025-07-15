@@ -1,40 +1,30 @@
 from typing import List
+import heapq
 
 class Solution:
     def smallestChair(self, times: List[List[int]], targetFriend: int) -> int:
+        n = len(times)
 
-        events = []  # to store both arrival and leave events
+        nextAvaialbleChair = 0
+        middleChairsAvailable = []
+        occupiedChairs = []
 
-        # populate events with arrival and leave times
-        for i in range(len(times)):
-            events.append([times[i][0], i])  # Arrival
-            events.append([times[i][1], ~i])  # Leave
+        indexedTimes = [[times[i][0],times[i][1],i] for i in range(n)]
+        indexedTimes.sort(key = lambda x:x[0])
 
-        events.sort()  # Sort events by time
+        for [start, end, index] in indexedTimes:
 
-        available_chairs = list(
-            range(len(times))
-        )  # Tracking chairs that are free
+            while occupiedChairs and occupiedChairs[0][0]<=start:
+                ( _, chairFreed) = heapq.heappop(occupiedChairs)
+                heapq.heappush(middleChairsAvailable, chairFreed)
 
-        occupied_chairs = []  # When each chair will be free
-
-        for event in events:
-            time, friend = event
-
-            # free up chairs if friends leave
-            while occupied_chairs and occupied_chairs[0][0] <= time:
-                _, chair = heapq.heappop(
-                    occupied_chairs
-                )  # Pop chair that becomes empty
-                heapq.heappush(available_chairs, chair)  # available chairs
-
-            # If friend arrives
-            if friend >= 0:
-                chair = heapq.heappop(available_chairs)
-                if friend == targetFriend:
-                    return chair
-                heapq.heappush(
-                    occupied_chairs, [times[friend][1], chair]
-                )  # chair will be occupied till this time
-
-        return -1  # should not come to this point
+            if middleChairsAvailable:
+                chair = heapq.heappop(middleChairsAvailable)
+            else:
+                chair = nextAvaialbleChair
+                nextAvaialbleChair+=1
+            
+            if index == targetFriend:
+                return chair
+            else:
+                heapq.heappush(occupiedChairs, (end, chair) )
