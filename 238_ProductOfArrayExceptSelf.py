@@ -1,29 +1,48 @@
+from typing import List
+
+# tc:O(n)       sc:O(1)
+# with using division operation
 class Solution:
     def productExceptSelf(self, nums: List[int]) -> List[int]:
-        product = 1
-        isZero = 0
-        isNonZero = False
-        for n in nums:
-            if n == 0:
-                isZero+=1
-                continue
-            isNonZero = True
-            product*=n
 
-        if not isNonZero:
-            product = 0
+        n = len(nums)
+
+        totalProduct = 1
+        zeroIndex = -1
+        for i in range(n):
+            if nums[i]==0:
+                if zeroIndex!=-1:
+                    return [0]*n
+                zeroIndex=i
+            else:
+                totalProduct*=nums[i]
+
+        if zeroIndex!=-1:
+            ans = [0]*n
+            ans[zeroIndex] = totalProduct
+            return ans
 
         ans = []
-
-        if isZero>1:
-            ans = [0 for n in nums]
-        elif isZero==1:
-            for n in nums:
-                if n==0:
-                    ans.append(product)
-                else:
-                    ans.append(0)
-        else:
-            ans = [ int(product/n) for n in nums]
+        for num in nums:
+            ans.append(totalProduct//num)
         
         return ans
+    
+# # tc:O(n)       sc:O(1)
+# # without using division operation
+# class Solution:
+#     def productExceptSelf(self, nums: List[int]) -> List[int]:
+
+#         n = len(nums)
+#         ans = []
+#         currProduct = 1
+#         for num in nums:
+#             ans.append(currProduct)
+#             currProduct*=num
+
+#         suffProduct=nums[-1]
+#         for i in range(n-2,-1,-1):
+#             ans[i]=ans[i]*suffProduct
+#             suffProduct*=nums[i]
+        
+#         return ans
