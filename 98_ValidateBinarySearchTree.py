@@ -7,7 +7,23 @@ class TreeNode:
         self.left = left
         self.right = right
 
+# tc=O(n), sc=O(n) - dfs - same as below - cleaner code
+class Solution:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        
+        def isValid(node, minVal, maxVal):
+            if not node:
+                return True
+            
+            if not (minVal<node.val<maxVal):
+                return False
+            
+            return isValid(node.left, minVal, node.val) and isValid(node.right, node.val, maxVal)
+        
+        return isValid(root, float('-inf'), float('inf'))
+    
 
+# tc=O(n), sc=O(n) - dfs - same as above
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
         return self.isValidSubBST(root, -float('inf'), float('inf'))
