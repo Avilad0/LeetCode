@@ -40,13 +40,13 @@ class Codec:
         :rtype: TreeNode
         """
 
-        n = len(data)
         indx = 0
         preorder = data.split(",")
+        n = len(preorder)
 
         def buildTree():
             nonlocal indx
-            if indx>n or preorder[indx]=="N":
+            if indx>=n or preorder[indx]=="N":
                 indx+=1
                 return None
 
