@@ -1,42 +1,59 @@
-import collections
 from typing import List
 
+from collections import deque
+# 0-1 BFS : tc=O(m*n), sc=O(m*n)
 class Solution:
-    _dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-
     def minCost(self, grid: List[List[int]]) -> int:
-        num_rows, num_cols = len(grid), len(grid[0])
+        dirs = {1:(0,1), 2:(0,-1), 3:(1,0), 4:(-1,0)}
 
-        min_cost = [[float("inf")] * num_cols for _ in range(num_rows)]
-        min_cost[0][0] = 0
+        m,n = len(grid), len(grid[0])
 
-        deque = collections.deque([(0, 0)])
+        minCost = [[float('inf') for _ in range(n)] for __ in range(m)]
+        minCost[0][0]=0
 
-        while deque:
-            row, col = deque.popleft()
+        dq = deque([(0,0)])
+        while dq:
+            (r, c) = dq.popleft()
 
-            for dir_idx, (dx, dy) in enumerate(self._dirs):
-                new_row, new_col = row + dx, col + dy
-                cost = 0 if grid[row][col] == dir_idx + 1 else 1
-
-                # If position is valid and we found a better path
-                if (
-                    self._is_valid(new_row, new_col, num_rows, num_cols)
-                    and min_cost[row][col] + cost < min_cost[new_row][new_col]
-                ):
-
-                    min_cost[new_row][new_col] = min_cost[row][col] + cost
-
-                    # Add to back if cost=1, front if cost=0
-                    if cost == 1:
-                        deque.append((new_row, new_col))
+            for i in range(1,5):
+                nr, nc = r+dirs[i][0], c+dirs[i][1]
+                nCost = (0 if i==grid[r][c] else 1)
+                if nr>=0 and nr<m and nc>=0 and nc<n and minCost[nr][nc]>minCost[r][c]+nCost:
+                    minCost[nr][nc]=minCost[r][c]+nCost
+                    if nCost==1:
+                        dq.append((nr,nc))
                     else:
-                        deque.appendleft((new_row, new_col))
+                        dq.appendleft((nr,nc))
+        
+        return minCost[m-1][n-1]
 
-        return min_cost[num_rows - 1][num_cols - 1]
 
-    # Check if coordinates are within grid bounds
-    def _is_valid(
-        self, row: int, col: int, num_rows: int, num_cols: int
-    ) -> bool:
-        return 0 <= row < num_rows and 0 <= col < num_cols
+
+# # import heapq
+
+# # Dijkstra's : tc=O(m*n*log(m*n)), sc=O(m*n)
+# class Solution:
+#     def minCost(self, grid: List[List[int]]) -> int:
+#         dirs = {1:(0,1), 2:(0,-1), 3:(1,0), 4:(-1,0)}
+
+#         m,n = len(grid), len(grid[0])
+
+#         minCost = [[float('inf') for _ in range(n)] for __ in range(m)]
+
+#         pq = [(0, 0,0)]     #minHeap: cost, row, col
+#         while pq:
+#             (cost, r, c) = heapq.heappop(pq)
+#             if r==m-1 and c==n-1:
+#                 return cost
+            
+#             if minCost[r][c]<=cost:
+#                 continue
+
+#             minCost[r][c]=cost
+#             for i in range(1,5):
+#                 nr, nc = r+dirs[i][0], c+dirs[i][1]
+#                 nCost = cost+ (0 if i==grid[r][c] else 1)
+#                 if nr>=0 and nr<m and nc>=0 and nc<n and minCost[nr][nc]>nCost:
+#                     heapq.heappush(pq, (nCost, nr, nc))
+        
+#         return -1
