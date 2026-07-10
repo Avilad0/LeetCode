@@ -16,6 +16,36 @@ class Solution:
         return 0 if len(heap)==0 else -heap[0]
     
 
+# tc= O(n + max(stones)), sc=O(max(stones)) - using bucket sort (same as below but faster to cancel out even counts of max stones and reduce odd counts to 1 as evens cancel out)
+class Solution:
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        maxS = max(stones)
+        freq = [0]*(maxS+1)
+
+        for stone in stones:
+            freq[stone]+=1
+        
+        i = maxS
+        while i>=0:
+            if freq[i]%2==0:
+                freq[i]=0   #even max stones cancel out.
+                i-=1
+            else:
+                freq[i]=0   # odd max stones cancel among themselves except only 1 and that is used here.
+                x=i
+                while i>0 and freq[i]==0:
+                    i-=1
+                if i==0:
+                    return x
+                
+                y=i
+                freq[i]-=1
+
+                freq[x-y]+=1
+                i=max(x-y, y)
+
+        return 0
+
 # tc= O(n + max(stones)), sc=O(max(stones)) - using bucket sort
 class Solution:
     def lastStoneWeight(self, stones: List[int]) -> int:
