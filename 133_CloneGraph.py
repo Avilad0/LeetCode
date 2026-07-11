@@ -7,22 +7,48 @@ class Node:
         self.neighbors = neighbors if neighbors is not None else []
 
 from typing import Optional
+
+#BFS, samt complexity as below
+# tc = O(V+E), sc=O(V)
+from collections import deque
 class Solution:
     def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
-        nodesSeen = {}
+        if not node:
+            return None
 
-        def dfs(curr):
-            if not curr: 
-                return None
-            if curr in nodesSeen:
-                return nodesSeen[curr]
-            
-            newNode = Node(curr.val, [])
-            nodesSeen[curr] = newNode
+        oldToNew = {}
+        oldToNew[node] = Node(node.val,[])
+        q = deque([node])
 
-            for neighbor in curr.neighbors:
-                newNode.neighbors.append(dfs(neighbor))
+        while q:        
+            old = q.popleft()
+            new = oldToNew[old]
+            for neighbor in old.neighbors:
+                if neighbor not in oldToNew:
+                    oldToNew[neighbor] = Node(neighbor.val, [])
+                    q.append(neighbor)
+                new.neighbors.append(oldToNew[neighbor])
 
-            return newNode
         
-        return dfs(node)
+        return oldToNew[node]
+
+# DFS
+# class Solution:
+#     def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+#         nodesSeen = {}
+
+#         def dfs(curr):
+#             if not curr: 
+#                 return None
+#             if curr in nodesSeen:
+#                 return nodesSeen[curr]
+            
+#             newNode = Node(curr.val, [])
+#             nodesSeen[curr] = newNode
+
+#             for neighbor in curr.neighbors:
+#                 newNode.neighbors.append(dfs(neighbor))
+
+#             return newNode
+        
+#         return dfs(node)
