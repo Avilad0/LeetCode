@@ -1,14 +1,25 @@
-
-# tc = O(logn), but since n<=2^32, tc=O(32)=O(1)
-# Using bit-operatrions
+# # tc = O(count(1s)) = O(logn) if all bits set, but since n<=2^32, tc=O(32)=O(1)
+# # Using bit-operatrions
 class Solution:
     def hammingWeight(self, n: int) -> int:
         bits = 0
         while n:
-            bits += n&1
-            n>>=1
+            bits += 1
+            n=n&(n-1)
         
         return bits
+
+
+# # tc = O(logn), but since n<=2^32, tc=O(32)=O(1)
+# # Using bit-operatrions
+# class Solution:
+#     def hammingWeight(self, n: int) -> int:
+#         bits = 0
+#         while n:
+#             bits += n&1
+#             n>>=1
+        
+#         return bits
     
 
 # Using arithmetic-operatrions (same comoplexity)
